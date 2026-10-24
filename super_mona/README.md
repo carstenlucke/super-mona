@@ -1,6 +1,6 @@
 # Super Mona
 
-Run, jump and stomp through eight side-scrolling stages as Mona in this original platformer for the Universe 2026 badge.
+Run, jump and stomp through 32 side-scrolling stages as Mona in this original platformer for the Universe 2026 badge.
 
 ## How to play
 
@@ -11,19 +11,20 @@ shell — or hold **B** to pick it up and release **B** to throw it.
 
 ## Stages
 
-Two worlds of four stages each. They follow the shape of a classic NES world
-(overworld, underground, sky and castle), but the layouts are original.
+Eight worlds of four stages each. Every world follows the shape of a classic
+NES world (overworld, underground, sky, castle), but the layouts are original.
+Later worlds have wider pits and more enemies.
 
-| Stage | Theme |
-| --- | --- |
-| 1-1 HELLO WORLD | Overworld: pipes, `?` blocks and stairs |
-| 1-2 SERVER ROOM | Underground server racks under a low ceiling |
-| 1-3 SKY BRIDGE | Dusk girders over long drops |
-| 1-4 FIREWALL | Castle: raised start, pits and girder bridges |
-| 2-1 PULL REQUEST | Overworld: pipe pairs and long block rows |
-| 2-2 OVERFLOW | Underground stack of brick towers and a pipe maze |
-| 2-3 CLOUD DEPLOY | Girder hops above the clouds |
-| 2-4 CONFLICT | Final castle with more shellbots |
+| World | -1 | -2 | -3 | -4 |
+| --- | --- | --- | --- | --- |
+| 1 | HELLO WORLD | SERVER ROOM | SKY BRIDGE | FIREWALL |
+| 2 | PULL REQUEST | OVERFLOW | CLOUD DEPLOY | CONFLICT |
+| 3 | CLONE | FORK | PUSH | PULL |
+| 4 | ACTION | TRIGGER | PRE-PROD | PROD |
+| 5 | BUG BASH | STACK TRACE | BREAKPOINT | SEGFAULT |
+| 6 | CONTAINER | KERNEL PANIC | EDGE CACHE | DEADLOCK |
+| 7 | CLONE | STASH | PR | MERGE |
+| 8 | PLAN | BUILD | TEST | SHIP-IT |
 
 ## Controls
 

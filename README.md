@@ -1,7 +1,7 @@
 # Super Mona
 
 An original side-scrolling platformer for the **GitHub Universe 2026 badge**.
-Run, jump and stomp through eight stages across two worlds as Mona (or Ducky the rubber duck).
+Run, jump and stomp through 32 stages across eight worlds as Mona (or Ducky the rubber duck).
 
 <img src="docs/title.png" width="320" alt="Super Mona title screen"> <img src="docs/intro.png" width="320" alt="Stage 1-2 intro"> <img src="docs/ducky.png" width="320" alt="Choosing Ducky on the HERO page">
 
@@ -48,21 +48,22 @@ Super Mona appears in the badge menu.
 
 ## Stages
 
-Two worlds of four stages each. They follow the shape of a classic NES world
-(overworld, underground, sky and castle), but the layouts are original.
+Eight worlds of four stages each. Every world follows the shape of a classic
+NES world (overworld, underground, sky, castle), but the layouts are original.
+Later worlds have wider pits and more enemies.
 
-<img src="docs/stages.png" width="640" alt="Stages 1-4 to 2-4 on the badge">
+| World | -1 | -2 | -3 | -4 |
+| --- | --- | --- | --- | --- |
+| 1 | HELLO WORLD | SERVER ROOM | SKY BRIDGE | FIREWALL |
+| 2 | PULL REQUEST | OVERFLOW | CLOUD DEPLOY | CONFLICT |
+| 3 | CLONE | FORK | PUSH | PULL |
+| 4 | ACTION | TRIGGER | PRE-PROD | PROD |
+| 5 | BUG BASH | STACK TRACE | BREAKPOINT | SEGFAULT |
+| 6 | CONTAINER | KERNEL PANIC | EDGE CACHE | DEADLOCK |
+| 7 | CLONE | STASH | PR | MERGE |
+| 8 | PLAN | BUILD | TEST | SHIP-IT |
 
-| Stage | Theme |
-| --- | --- |
-| 1-1 HELLO WORLD | Overworld: pipes, `?` blocks and stairs |
-| 1-2 SERVER ROOM | Underground server racks under a low ceiling |
-| 1-3 SKY BRIDGE | Dusk girders over long drops |
-| 1-4 FIREWALL | Castle: raised start, pits and girder bridges |
-| 2-1 PULL REQUEST | Overworld: pipe pairs and long block rows |
-| 2-2 OVERFLOW | Underground stack of brick towers and a pipe maze |
-| 2-3 CLOUD DEPLOY | Girder hops above the clouds |
-| 2-4 CONFLICT | Final castle with more shellbots |
+<img src="docs/stages.png" width="640" alt="Worlds 1 and 2 on the badge"> <img src="docs/worlds.png" width="640" alt="Worlds 3 to 8 on the badge">
 
 ## How to play
 

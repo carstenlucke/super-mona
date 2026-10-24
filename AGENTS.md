@@ -77,7 +77,10 @@ find "<BADGER>/apps/super_mona" -name '._*' -delete   # macOS only
 
 - Run the tests with `python3 -m unittest discover -s tests` (needs Pillow).
   Keep them passing.
-- Stages live in `super_mona/levels.py` and are listed in `LEVELS`. Layouts
+- Stages live in `super_mona/levels.py` and are listed in `LEVELS`. Worlds 1-2
+  are hand-built; worlds 3-8 are assembled from segment functions in
+  `SEGMENTS` using the plan strings in `_WORLDS` (the world index raises the
+  difficulty). Don't set attributes on functions; MicroPython rejects them. Layouts
   must be original; take only the structure of classic platformer worlds
   (overworld, underground, sky, castle), never their tile layouts. A test bot
   runs right and jumps at walls and gaps, so every stage must be finishable

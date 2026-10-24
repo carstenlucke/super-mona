@@ -418,5 +418,199 @@ def merge_conflict():
     return lv
 
 
+# Worlds 3-8 ----------------------------------------------------------------
+# Built from small original segments so 24 stages stay light on badge RAM.
+# Each world runs overworld, underground, sky, castle; k (0-5) raises the
+# difficulty with wider pits and more enemies.
+
+ITEMS = ("chip", "sparkle", "chip", "1up", "multi6")
+
+
+class _Rand:
+    def __init__(self, seed):
+        self.s = seed
+
+    def __call__(self, n):
+        self.s = (self.s * 1103515245 + 12345) & 0x7FFFFFFF
+        return (self.s >> 16) % n
+
+
+def _flat(lv, x, k, r):
+    lv.ground(x, x + 9)
+    lv.star_line(x + 2, 9, 3)
+    lv.enemy(x + 4 + r(3))
+    if k > 2:
+        lv.enemy(x + 8)
+    return x + 10
+
+
+def _pipes(lv, x, k, r):
+    lv.ground(x, x + 15)
+    lv.pipe(x + 2, 2 + r(2))
+    lv.enemy(x + 6)
+    lv.pipe(x + 9, 3 + r(2))
+    if k > 1:
+        lv.enemy(x + 13, "shellbot")
+    return x + 16
+
+
+def _blocks(lv, x, k, r):
+    lv.ground(x, x + 13)
+    lv.row(x + 2, 9, "BQBBB")
+    lv.block(x + 5, 9, ITEMS[r(len(ITEMS))])
+    if r(2):
+        lv.block(x + 4, 5, "multi6", brick=True)
+    else:
+        lv.star_line(x + 3, 5, 3)
+    lv.enemy(x + 9)
+    lv.enemy(x + 11)
+    return x + 14
+
+
+def _pit(lv, x, k, r):
+    w = 2 + min(2, (k + r(2)) // 2)
+    lv.star_line(x, 9, w)
+    lv.ground(x + w, x + w + 3)
+    return x + w + 4
+
+
+def _stairs(lv, x, k, r):
+    h = 3 + min(1, k // 2)
+    lv.ground(x, x + h)
+    lv.stairs(x + 1, h)
+    x2 = x + h + 1 + (2 if k >= 2 else 0)
+    lv.ground(x2, x2 + h + 2)
+    lv.stairs(x2, h, up=False)
+    lv.enemy(x2 + h + 1)
+    return x2 + h + 3
+
+
+def _swarm(lv, x, k, r):
+    lv.ground(x, x + 13)
+    lv.row(x + 4, 8, "Q", "1up" if r(4) == 0 else "chip")
+    lv.enemy(x + 3)
+    lv.enemy(x + 5)
+    lv.enemy(x + 8, "shellbot")
+    if k >= 2:
+        lv.enemy(x + 11)
+    return x + 14
+
+
+def _towers(lv, x, k, r):
+    lv.ground(x, x + 15)
+    for i in range(4):
+        for y in range(12 - i, 13):
+            lv.row(x + 1 + i * 3, y, "B")
+    lv.star_line(x + 1, 7, 10)
+    lv.enemy(x + 14)
+    return x + 16
+
+
+def _corridor(lv, x, k, r):
+    lv.ground(x, x + 11)
+    lv.row(x + 1, 9, "BBBBBBBB")
+    lv.row(x + 1, 5, "BBBBBBBB")
+    lv.block(x + 3 + r(4), 9, ITEMS[r(len(ITEMS))], brick=True)
+    lv.star_line(x + 2, 7, 6)
+    lv.enemy(x + 10)
+    return x + 12
+
+
+def _hops(lv, x, k, r):
+    lv.row(x + 2, 11, "=" * 9)
+    lv.row(x + 14, 10, "=" * 8)
+    lv.star_line(x + 15, 9, 6)
+    lv.enemy(x + 18, "bug", y=9)
+    lv.row(x + 25, 11, "=" * 6)
+    return x + 34
+
+
+def _bridge(lv, x, k, r):
+    lv.row(x + 1, 11, "===")
+    lv.star_line(x + 1, 8, 3)
+    lv.ground(x + 5, x + 10)
+    lv.enemy(x + 8)
+    return x + 11
+
+
+def _roof(lv, x, k, r):
+    lv.ground(x, x + 15)
+    lv.row(x + 2, 6, "H" * 10)
+    lv.row(x + 4, 9, "BBBB")
+    lv.block(x + 5, 9, "multi8" if r(2) else "sparkle", brick=True)
+    lv.enemy(x + 8, "shellbot")
+    lv.enemy(x + 12)
+    return x + 16
+
+
+SEGMENTS = {
+    "f": _flat, "p": _pipes, "b": _blocks, "g": _pit, "s": _stairs,
+    "w": _swarm, "t": _towers, "c": _corridor, "h": _hops, "x": _bridge,
+    "r": _roof,
+}
+
+
+def _build(name, theme, plan, k, seed, width):
+    lv = Level(name, width, theme, 300, switch=True)
+    r = _Rand(seed)
+    lv.ground(0, 9)
+    lv.row(5, 9, "Q", "chip")
+    x = 10
+    for code in plan:
+        x = SEGMENTS[code](lv, x, k, r)
+    lv.ground(x, x + 23)
+    lv.stairs(x + 2, 6)
+    lv.flag(x + 14)
+    end = x + 24
+    if theme == "cave":
+        lv.ceiling(0, x + 13)
+    elif theme == "castle":
+        lv.ceiling(0, x + 13, rows=(1, 2))
+    else:
+        for hx in range(0, end - 3, 37):
+            if lv.solid(hx, 13) and lv.solid(hx + 2, 13):
+                lv.hill(hx)
+        for bx in range(9, end - 3, 23):
+            if lv.solid(bx, 13) and lv.solid(bx + 2, 13) and not lv.solid(bx + 1, 12):
+                lv.bush(bx)
+        for i, cx in enumerate(range(6, end - 3, 21)):
+            lv.cloud(cx, 2 + i % 3)
+    return lv, end
+
+
+def _stage(name, theme, plan, k, seed):
+    def factory():
+        _, width = _build(name, theme, plan, k, seed, 200)
+        return _build(name, theme, plan, k, seed, width)[0]
+    return factory
+
+
+_WORLDS = (
+    (("CLONE", "FORK", "PUSH", "PULL"),
+     ("day", "cave", "cloud", "castle"),
+     ("bpgwsbgp", "cgtwcgs", "bhwh", "rxwrxs")),
+    (("ACTION", "TRIGGER", "PRE-PROD", "PROD"),
+     ("day", "cave", "dusk", "castle"),
+     ("pgpbwgsp", "tcgwtcs", "fhbhw", "xrwxrs")),
+    (("BUG BASH", "STACK TRACE", "BREAKPOINT", "SEGFAULT"),
+     ("dusk", "cave", "cloud", "castle"),
+     ("wbgpswgb", "ctgwcts", "hwbh", "rxwxrws")),
+    (("CONTAINER", "KERNEL PANIC", "EDGE CACHE", "DEADLOCK"),
+     ("day", "cave", "dusk", "castle"),
+     ("pbgwpgsw", "tcwgtcgs", "bhwhf", "xrxwrxs")),
+    (("CLONE", "STASH", "PR", "MERGE"),
+     ("day", "cave", "cloud", "castle"),
+     ("bgpwgsbpg", "cgtwcgts", "hbhw", "rxwrxws")),
+    (("PLAN", "BUILD", "TEST", "SHIP-IT"),
+     ("dusk", "cave", "dusk", "castle"),
+     ("wpgbsgwpg", "tcgwctgs", "hwhbh", "xrwxrwxs")),
+)
+
+EXTRA = []
+for _w, (_names, _themes, _plans) in enumerate(_WORLDS):
+    for _s in range(4):
+        EXTRA.append(_stage("%d-%d %s" % (_w + 3, _s + 1, _names[_s]),
+                            _themes[_s], _plans[_s], _w, _w * 4 + _s + 7))
+
 LEVELS = (hello_world, server_room, sky_bridge, firewall,
-          pull_request, stack_overflow, cloud_deploy, merge_conflict)
+          pull_request, stack_overflow, cloud_deploy, merge_conflict) + tuple(EXTRA)
