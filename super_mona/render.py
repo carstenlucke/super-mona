@@ -30,10 +30,10 @@ HUD_FONT = font.sins
 TITLE_FONT = font.absolute
 
 _tiles = image.load("assets/tiles.png").spritesheet(16, 4)
-_players = image.load("assets/players.png").spritesheet(8, 4)
+_players = image.load("assets/players.png").spritesheet(8, 8)
 _mobs = image.load("assets/mobs.png").spritesheet(8, 2)
 TILES = [_tiles.sprite(i % 16, i // 16) for i in range(64)]
-PLAYERS = [[_players.sprite(c, r) for c in range(8)] for r in range(4)]
+PLAYERS = [[_players.sprite(c, r) for c in range(8)] for r in range(8)]
 MOBS = [_mobs.sprite(i % 8, i // 8) for i in range(16)]
 
 STAND, WALK1, WALK2, JUMP, SKID, CROUCH, DEAD, CLIMB = range(8)
@@ -54,8 +54,8 @@ def centre(msg, y, pen=WHITE, fnt=None):
     text(msg, (VIEW_W - w) / 2, y, pen)
 
 
-def hero_sprite(character, big, col=STAND):
-    row = (2 if character == "ducky" else 0) + (1 if big else 0)
+def hero_sprite(character, big, col=STAND, glow=False):
+    row = (2 if character == "ducky" else 0) + (1 if big else 0) + (4 if glow else 0)
     return PLAYERS[row][col]
 
 
@@ -196,10 +196,8 @@ class Renderer:
             col = WALK1 if int(p.walk_phase / 6) % 2 else WALK2
         else:
             col = STAND
-        character = p.character
-        if p.sparkle > 0 and int(t * 12) % 2:
-            character = "ducky" if character == "mona" else "mona"
-        sprite = hero_sprite(character, p.big, col)
+        glow = p.sparkle > 0 and int(t * 12) % 2
+        sprite = hero_sprite(p.character, p.big, col, glow)
         x = int(p.x) - 5 - cam
         y = int(p.y + p.h) - 16
         if p.facing < 0:

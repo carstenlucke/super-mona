@@ -95,7 +95,9 @@ find "<BADGER>/apps/super_mona" -name '._*' -delete   # macOS only
   `game.autopilot` costs almost nothing.
 - The art is generated. Edit `tools/build_super_mona_assets.py` and run it
   rather than hand-editing PNGs in `super_mona/assets/`. `icon.png` must stay
-  24x24.
+  24x24. `players.png` is 8x8 cells of 16x16: rows 0-3 are small/big
+  Mona and small/big Ducky, and rows 4-7 are the same frames recoloured pink
+  for the sparkle flash (`hero_sprite(..., glow=True)`).
 - `super_mona/README.md` must start with a one-sentence description, because
   the badge menu uses it.
 - Firmware API notes (Universe 2026):

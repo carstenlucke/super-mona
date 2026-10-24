@@ -506,10 +506,27 @@ def ducky_frames():
     return frames
 
 
+def sparkle_tint(img):
+    """Pink-and-white recolour used for the flashing sparkle frames."""
+    out = img.copy()
+    ramp = ((72, 8, 40), (220, 32, 104), (255, 120, 184), (255, 240, 248))
+    px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if not a:
+                continue
+            lum = (r * 3 + g * 6 + b) / 2550 * (len(ramp) - 1)
+            i = min(int(lum), len(ramp) - 2)
+            f = lum - i
+            px[x, y] = tuple(int(ramp[i][k] + (ramp[i + 1][k] - ramp[i][k]) * f) for k in range(3)) + (a,)
+    return out
+
+
 def build_players():
-    """16x16 cells: rows small/big Mona, small/big Ducky."""
+    """16x16 cells: rows small/big Mona, small/big Ducky, then sparkle copies."""
     src = Image.open(FLAPPY_MONA).convert("RGBA")
-    sheet = Image.new("RGBA", (128, 64), (0, 0, 0, 0))
+    sheet = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
     for col, frame in enumerate(PLAYER_FRAMES):
         x, y = (frame % 7) * 24, (frame // 7) * 24
         cell = src.crop((x, y, x + 24, y + 24))
@@ -520,6 +537,7 @@ def build_players():
         paint(cell, rows, 0, 0)
         sheet.alpha_composite(cell.resize((12, 12), Image.NEAREST), (col * 16 + 2, 36))
         sheet.alpha_composite(cell, (col * 16, 48))
+    sheet.alpha_composite(sparkle_tint(sheet.crop((0, 0, 128, 64))), (0, 64))
     return sheet
 
 def build_mobs():

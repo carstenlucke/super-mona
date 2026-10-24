@@ -205,7 +205,7 @@ class SuperMonaTests(unittest.TestCase):
     def test_asset_sizes(self):
         sizes = {
             "assets/tiles.png": (128, 32),
-            "assets/players.png": (128, 64),
+            "assets/players.png": (128, 128),
             "assets/mobs.png": (64, 16),
             "icon.png": (24, 24),
         }
