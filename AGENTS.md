@@ -83,11 +83,16 @@ find "<BADGER>/apps/super_mona" -name '._*' -delete   # macOS only
   difficulty). Don't set attributes on functions; MicroPython rejects them. Layouts
   must be original; take only the structure of classic platformer worlds
   (overworld, underground, sky, castle), never their tile layouts. A test bot
-  runs right and jumps at walls and gaps, so every stage must be finishable
-  that way. Keep `width` at 190 tiles or less (the stage is pre-rendered to
-  one image) and keep stage names within 144px in `font.absolute` so they fit
-  the intro panel. Themes are `day`, `cave`, `dusk`, `cloud` and `castle`
-  (see `render.SKY`).
+  (`game.autopilot`, which also drives the title-screen demo) runs right and
+  jumps at walls and gaps. Every stage must be finishable that way with
+  `world.demo = True`, which makes enemies harmless. Keep `width` at 190
+  tiles or less (the stage is pre-rendered to one image) and keep stage names
+  within 144px in `font.absolute` so they fit the intro panel. Themes are
+  `day`, `cave`, `dusk`, `cloud` and `castle` (see `render.SKY`).
+- The attract-mode demo (`DEMO` state in `__init__.py`) uses its own
+  `demo_world` and `Session` and never calls `save_high()`. Keep it cheap: an
+  on-badge lookahead planner measured ~270 ms per frame, but the reflex
+  `game.autopilot` costs almost nothing.
 - The art is generated. Edit `tools/build_super_mona_assets.py` and run it
   rather than hand-editing PNGs in `super_mona/assets/`. `icon.png` must stay
   24x24.

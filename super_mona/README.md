@@ -9,6 +9,11 @@ floating stars (100 stars earns an extra life), bump `?` blocks for power
 chips, sparkles and 1-ups, and stomp bugs and shellbots. Kick a shellbot's
 shell — or hold **B** to pick it up and release **B** to throw it.
 
+Leave the title screen idle for 10 seconds to watch a demo: a bot plays two
+stages, collecting stars, while **PRESS SELECT** flashes. Any button returns to
+the title, and **Select** starts a game. Demo play never touches your score or
+high score.
+
 ## Stages
 
 Eight worlds of four stages each. Every world follows the shape of a classic

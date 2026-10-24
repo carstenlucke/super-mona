@@ -12,7 +12,7 @@ APP = Path(__file__).resolve().parents[1] / "super_mona"
 sys.path.insert(0, str(APP))
 
 import game  # noqa: E402
-from game import TILE, ROWS, Controls, Session, World, tile_of  # noqa: E402
+from game import TILE, Controls, Session, World  # noqa: E402
 import levels  # noqa: E402
 
 DT = 1 / 30
@@ -37,21 +37,6 @@ def settle(world, frames=10, controls=None):
     controls = controls or Controls()
     for _ in range(frames):
         world.step(DT, controls)
-
-
-def bot(world, c):
-    p = world.player
-    lv = world.level
-    c.right = True
-    c.run = True
-    rows = range(tile_of(p.y), tile_of(p.y + p.h - 0.01) + 1)
-    wall = any(lv.solid(tile_of(p.x + p.w + d), ty) for d in (1, 10) for ty in rows)
-    front = tile_of(p.x + p.w + 10)
-    feet = tile_of(p.y + p.h + 1)
-    gap = not any(lv.solid(front + k, y) for k in (0, 1) for y in range(feet, ROWS))
-    want = (wall or gap) and p.on_ground
-    c.jump_pressed = want and not c.jump
-    c.jump = want or (c.jump and p.vy < 0)
 
 
 class SuperMonaTests(unittest.TestCase):
@@ -207,10 +192,10 @@ class SuperMonaTests(unittest.TestCase):
         for factory in levels.LEVELS:
             level = factory()
             world = World(level, Session())
+            world.demo = True
             c = Controls()
             for _ in range(int(120 / DT)):
-                world.player.sparkle = 1.0
-                bot(world, c)
+                game.autopilot(world, c)
                 world.step(DT, c)
                 if world.state == "clear":
                     break
@@ -264,7 +249,9 @@ class FakeBadge(Anything):
         self.down = set()
         self.fresh = set()
 
-    def pressed(self, button):
+    def pressed(self, button=None):
+        if button is None:
+            return set(self.fresh)
         return button in self.fresh
 
     def held(self, button):
@@ -320,6 +307,24 @@ class AppStateTests(unittest.TestCase):
 
             frames(3)
             self.assertEqual(app.state, app.TITLE)
+            frames(int(app.DEMO_IDLE / 0.033) + 2)
+            self.assertEqual(app.state, app.DEMO)
+            self.assertIsNone(app.session)
+            stars = 0
+            for _ in range(int(150 / 0.033)):
+                frames(1)
+                if app.state != app.DEMO:
+                    break
+                stars = max(stars, app.demo_world.session.stars)
+            self.assertEqual(app.state, app.TITLE)
+            self.assertGreater(stars, 0)
+            self.assertEqual(saved, {})
+            self.assertIsNone(app.demo_world)
+            frames(int(app.DEMO_IDLE / 0.033) + 2)
+            self.assertEqual(app.state, app.DEMO)
+            frames(1, ("UP",))
+            self.assertEqual(app.state, app.TITLE)
+            frames(int(app.DEMO_IDLE / 0.033) + 2)
             frames(1, ("SELECT",))
             self.assertEqual(app.state, app.INTRO)
             frames(80)

@@ -80,6 +80,13 @@ throw it.
 | Menu | Pause. Left/Right switch between PAUSED, MAP, ITEMS and HERO |
 | Home | Quit to the badge menu |
 
+Leave the title screen alone for 10 seconds and a demo bot plays two stages
+while **PRESS SELECT** flashes. You can watch it collect stars. Press any
+button to return to the title, or **Select** to start a game. The demo never
+changes your score or saved high score.
+
+<img src="docs/demo.png" width="640" alt="Demo mode playing 2-1 PULL REQUEST on the badge">
+
 See [`super_mona/README.md`](super_mona/README.md) for the pause pages,
 including stored items and swapping between Mona and Ducky.
 

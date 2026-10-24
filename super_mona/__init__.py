@@ -16,7 +16,9 @@ from levels import LEVELS
 import render
 from render import Renderer, centre, text, hero_sprite, item_sprite, item_name
 
-TITLE, INTRO, PLAY, PAUSE, OVER, WIN = range(6)
+TITLE, INTRO, PLAY, PAUSE, OVER, WIN, DEMO = range(7)
+DEMO_IDLE = 10.0
+DEMO_STAGES = 2
 PAGES = ("PAUSED", "MAP", "ITEMS", "HERO")
 
 saved = {"high": 0}
@@ -32,6 +34,10 @@ page = 0
 cursor = 0
 title_level = LEVELS[0]()
 title_view = Renderer(title_level)
+demo_world = None
+demo_view = None
+demo_next = 0
+demo_played = 0
 
 
 def down(button):
@@ -79,6 +85,24 @@ def start_level():
     set_state(INTRO)
 
 
+def start_demo():
+    global demo_world, demo_view, demo_next
+    demo_world = None
+    demo_view = None
+    level = LEVELS[demo_next % len(LEVELS)]()
+    demo_next += 1
+    demo_view = Renderer(level)
+    demo_world = game.World(level, game.Session())
+    demo_world.demo = True
+    set_state(DEMO)
+
+
+def stop_demo():
+    global demo_world, demo_view
+    demo_world = None
+    demo_view = None
+
+
 def panel(y, h):
     screen.pen = render.PANEL
     screen.rectangle(8, y, 144, h)
@@ -91,6 +115,7 @@ def hints(msg):
 
 # States ------------------------------------------------------------------
 def draw_title(t):
+    global demo_played
     title_view.draw(title_world, t)
     centre("SUPER MONA", 22, render.GOLD, render.TITLE_FONT)
     screen.font = render.HUD_FONT
@@ -99,6 +124,40 @@ def draw_title(t):
         centre("PRESS SELECT", 84)
     if badge.pressed(BUTTON_SELECT):
         new_game()
+    elif badge.pressed():
+        set_state(TITLE)
+    elif state_time > DEMO_IDLE:
+        demo_played = 0
+        start_demo()
+
+
+def draw_demo(dt, t):
+    global demo_played
+    if badge.pressed():
+        select = badge.pressed(BUTTON_SELECT)
+        stop_demo()
+        if select:
+            new_game()
+        else:
+            set_state(TITLE)
+        return draw_title(t) if state == TITLE else None
+    w = demo_world
+    w.step(dt, game.autopilot(w, controls))
+    del w.session.events[:]
+    demo_view.draw(w, t)
+    demo_view.draw_hud(w)
+    if state_time < 2.0:
+        centre(w.level.name, 30, render.WHITE, render.TITLE_FONT)
+    if int(t * 2) % 2:
+        screen.font = render.HUD_FONT
+        centre("PRESS SELECT", 84)
+    if w.state in ("clear", "dead") or state_time > 60:
+        demo_played += 1
+        if demo_played < DEMO_STAGES:
+            start_demo()
+        else:
+            stop_demo()
+            set_state(TITLE)
 
 
 def draw_intro(t):
@@ -240,6 +299,8 @@ def update():
         play(dt, t)
     elif state == PAUSE:
         draw_paused(t)
+    elif state == DEMO:
+        draw_demo(dt, t)
     elif state == OVER:
         draw_end(state_time, "GAME OVER")
     else:

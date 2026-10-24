@@ -363,6 +363,7 @@ class World:
         self.flag_y = None if level.flag_x is None else (ROWS - 12) * TILE
         self.flag_bonus = 0
         self.max_cam = max(0, level.width * TILE - VIEW_W)
+        self.demo = False
 
     # Public API ------------------------------------------------------------
     def update(self, dt, controls):
@@ -547,7 +548,7 @@ class World:
 
     def hurt_player(self):
         p = self.player
-        if p.invulnerable > 0 or p.sparkle > 0 or self.state != "play":
+        if p.invulnerable > 0 or p.sparkle > 0 or self.demo or self.state != "play":
             return
         if p.carrying is not None:
             p.carrying.state = "shell"
@@ -768,7 +769,7 @@ class World:
             return
         if not overlap(p.x, p.y, p.w, p.h, e.x, e.y, e.w, e.h):
             return
-        if p.sparkle > 0:
+        if p.sparkle > 0 or self.demo:
             self.defeat_enemy(e, 200)
             return
         falling_onto = p.vy > 0 and (p.y + p.h) - e.y <= 5
@@ -918,3 +919,21 @@ class World:
         self.controls_run = controls.run
         self.controls_jump = controls.jump
         self.update(dt, controls)
+
+
+# Demo autopilot ----------------------------------------------------------------
+def autopilot(world, c):
+    """Cheap attract-mode driver: run right, hop walls and gaps."""
+    p = world.player
+    lv = world.level
+    c.left = c.up = c.down = False
+    c.right = c.run = True
+    rows = range(tile_of(p.y), tile_of(p.y + p.h - 0.01) + 1)
+    wall = any(lv.solid(tile_of(p.x + p.w + d), ty) for d in (1, 10) for ty in rows)
+    front = tile_of(p.x + p.w + 10)
+    feet = tile_of(p.y + p.h + 1)
+    gap = not any(lv.solid(front + k, y) for k in (0, 1) for y in range(feet, ROWS))
+    want = (wall or gap) and p.on_ground
+    c.jump_pressed = want and not c.jump
+    c.jump = want or (c.jump and p.vy < 0)
+    return c
