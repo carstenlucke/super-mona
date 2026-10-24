@@ -43,13 +43,13 @@ CHARACTERS = {
         "skid": 420, "jump": 152, "run_jump": 168, "grav_hold": 300,
         "grav": 900, "about": "Balanced grip",
     },
-    "luna": {
-        "name": "LUNA", "walk": 50, "run": 78, "accel": 150, "decel": 100,
+    "ducky": {
+        "name": "DUCKY", "walk": 50, "run": 78, "accel": 150, "decel": 100,
         "skid": 300, "jump": 166, "run_jump": 180, "grav_hold": 280,
-        "grav": 820, "about": "High jumps, slippery",
+        "grav": 820, "about": "Floaty jumps, slippery",
     },
 }
-CHARACTER_ORDER = ("mona", "luna")
+CHARACTER_ORDER = ("mona", "ducky")
 MAX_FALL = 210
 SMALL_H = 11
 BIG_H = 15

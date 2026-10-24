@@ -185,7 +185,7 @@ class SuperMonaTests(unittest.TestCase):
         self.assertTrue(world.use_item(0))
         self.assertTrue(world.player.big)
         self.assertTrue(world.switch_character())
-        self.assertEqual(world.session.character, "luna")
+        self.assertEqual(world.session.character, "ducky")
         level.switch = False
         self.assertFalse(world.switch_character())
 

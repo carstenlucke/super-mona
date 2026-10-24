@@ -53,7 +53,7 @@ def centre(msg, y, pen=WHITE, fnt=None):
 
 
 def hero_sprite(character, big, col=STAND):
-    row = (2 if character == "luna" else 0) + (1 if big else 0)
+    row = (2 if character == "ducky" else 0) + (1 if big else 0)
     return PLAYERS[row][col]
 
 
@@ -196,7 +196,7 @@ class Renderer:
             col = STAND
         character = p.character
         if p.sparkle > 0 and int(t * 12) % 2:
-            character = "luna" if character == "mona" else "mona"
+            character = "ducky" if character == "mona" else "mona"
         sprite = hero_sprite(character, p.big, col)
         x = int(p.x) - 5 - cam
         y = int(p.y + p.h) - 16

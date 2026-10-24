@@ -1,9 +1,9 @@
 # Super Mona
 
 An original side-scrolling platformer for the **GitHub Universe 2026 badge**.
-Run, jump and stomp through three stages as Mona (or Luna).
+Run, jump and stomp through three stages as Mona (or Ducky the rubber duck).
 
-<img src="docs/title.png" width="320" alt="Super Mona title screen"> <img src="docs/intro.png" width="320" alt="Stage 1-2 intro">
+<img src="docs/title.png" width="320" alt="Super Mona title screen"> <img src="docs/intro.png" width="320" alt="Stage 1-2 intro"> <img src="docs/ducky.png" width="320" alt="Choosing Ducky on the HERO page">
 
 ## Install with one Copilot prompt
 
@@ -62,7 +62,7 @@ throw it.
 | Home | Quit to the badge menu |
 
 See [`super_mona/README.md`](super_mona/README.md) for the pause pages,
-including stored items and swapping between Mona and Luna.
+including stored items and swapping between Mona and Ducky.
 
 ## Requirements
 
@@ -93,7 +93,7 @@ python3 install.py                          # deploy to a connected badge
 
 ## Credits and license
 
-Released under the [MIT License](LICENSE). The player sprites are derived from
+Released under the [MIT License](LICENSE). The Mona sprites are derived from
 the Flappy Mona artwork in [badger/home](https://github.com/badger/home)
 (MIT License, © Pimoroni & GitHub). All other code and art in this repository
 is original.

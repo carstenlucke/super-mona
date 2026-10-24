@@ -2,7 +2,8 @@
 """Generate the original pixel art used by the Super Mona badge app.
 
 Tiles and enemies are drawn here from ASCII sprites and simple shapes; the
-player sheet is derived from the Flappy Mona frames in tools/flappy_mona.png (from badger/home, MIT). Run from the repository root:
+Mona frames are derived from tools/flappy_mona.png (from badger/home, MIT) and
+Ducky is drawn from ASCII art below. Run from the repository root:
 
     python tools/build_super_mona_assets.py
 """
@@ -41,6 +42,8 @@ PALETTE = {
     "u": (64, 120, 220, 255),
     "U": (24, 52, 140, 255),
     "q": (168, 216, 255, 255),
+    "a": (176, 104, 16, 255),
+    "c": (232, 176, 40, 255),
 }
 
 # Tile sheet indices (16 columns x 4 rows of 8x8 cells). Keep in sync with
@@ -450,38 +453,73 @@ def build_tiles():
 FLAPPY_MONA = Path(__file__).resolve().parent / "flappy_mona.png"
 # Player sheet columns, chosen from the 24x24 flappy_mona frames.
 PLAYER_FRAMES = (2, 0, 3, 4, 1, 6, 7, 5)  # stand walk1 walk2 jump skid crouch dead climb
-LUNA_COLOURS = {
-    (109, 36, 170): (40, 160, 72),
-    (36, 0, 170): (0, 92, 48),
-    (73, 36, 85): (20, 64, 40),
+
+# Ducky, a classic yellow rubber duck: 15-row body (no feet), facing right.
+DUCKY_BODY = """
+................
+........aaaa....
+.......aYYyya...
+......aYyyyyya..
+......ayywkyya..
+......ayyyyyyaoa
+.......ayyyyaooo
+..aa....ayyaaaa.
+.aYya..aayya....
+.aYyyaaaYyyyaa..
+.ayyyyyYyyyyyya.
+.ayyyccccyyyyya.
+.ayyyyccyyyyyya.
+..ayyyyyyyyyya..
+...aaaaaaaaaa...
+"""
+DUCKY_WING_UP = {
+    9: ".aYyyaaaYcccaa..",
+    10: ".ayyyyyYcccyyya.",
+    11: ".ayyyyyyccyyyya.",
+    12: ".ayyyyyyyyyyyya.",
+}
+DUCKY_FEET = {
+    "stand": ".....oo...oo....",
+    "walk1": "....oo.....oo...",
+    "walk2": "......oo.oo.....",
+    "skid": "........oo.oo...",
+    "none": "................",
 }
 
 
-def recolour(img, mapping):
-    out = img.copy()
-    px = out.load()
-    for y in range(out.height):
-        for x in range(out.width):
-            r, g, b, a = px[x, y]
-            if a and (r, g, b) in mapping:
-                px[x, y] = mapping[(r, g, b)] + (a,)
-    return out
+def ducky_frames():
+    """16x16 ASCII frames in PLAYER_FRAMES column order."""
+    body = art(DUCKY_BODY)
+    check(body, 16, 15, "ducky body")
+    blank = "." * 16
+
+    def pose(feet, wing_up=False):
+        rows = [DUCKY_WING_UP.get(i, row) if wing_up else row for i, row in enumerate(body)]
+        return rows + [DUCKY_FEET[feet]]
+
+    crouch = [blank] * 3 + body[:10] + body[12:]
+    dead = [blank] + [row.replace("wk", "kk") for row in reversed(body)]
+    frames = [pose("stand"), pose("walk1"), pose("walk2"), pose("none", True),
+              pose("skid"), crouch, dead, pose("stand", True)]
+    for i, rows in enumerate(frames):
+        check(rows, 16, 16, "ducky frame %d" % i)
+    return frames
 
 
 def build_players():
-    """Mona and Luna, 16x16 cells: rows small/big Mona, small/big Luna."""
+    """16x16 cells: rows small/big Mona, small/big Ducky."""
     src = Image.open(FLAPPY_MONA).convert("RGBA")
     sheet = Image.new("RGBA", (128, 64), (0, 0, 0, 0))
-    for hero, colours in enumerate((None, LUNA_COLOURS)):
-        for col, frame in enumerate(PLAYER_FRAMES):
-            x, y = (frame % 7) * 24, (frame // 7) * 24
-            cell = src.crop((x, y, x + 24, y + 24))
-            if colours and frame != 7:
-                cell = recolour(cell, colours)
-            sheet.alpha_composite(cell.resize((12, 12), Image.NEAREST),
-                                  (col * 16 + 2, hero * 32 + 4))
-            sheet.alpha_composite(cell.resize((16, 16), Image.NEAREST),
-                                  (col * 16, hero * 32 + 16))
+    for col, frame in enumerate(PLAYER_FRAMES):
+        x, y = (frame % 7) * 24, (frame // 7) * 24
+        cell = src.crop((x, y, x + 24, y + 24))
+        sheet.alpha_composite(cell.resize((12, 12), Image.NEAREST), (col * 16 + 2, 4))
+        sheet.alpha_composite(cell.resize((16, 16), Image.NEAREST), (col * 16, 16))
+    for col, rows in enumerate(ducky_frames()):
+        cell = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+        paint(cell, rows, 0, 0)
+        sheet.alpha_composite(cell.resize((12, 12), Image.NEAREST), (col * 16 + 2, 36))
+        sheet.alpha_composite(cell, (col * 16, 48))
     return sheet
 
 def build_mobs():
