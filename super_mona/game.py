@@ -31,6 +31,9 @@ BUSH = 22
 CLOUD = 25
 CASTLE = 31
 
+# Themes drawn with cave ground and dark bricks.
+DARK_THEMES = ("cave", "castle")
+
 SOLID = bytearray(64)
 for _tile in (GROUND_TOP, GROUND, BRICK, QUESTION, USED, HARD, PIPE_TL, PIPE_TR,
               PIPE_L, PIPE_R, GIRDER, CAVE_GROUND, CAVE_BRICK):
@@ -117,7 +120,7 @@ class Level:
         return SOLID[self.get(tx, ty)]
 
     def ground(self, x0, x1, top=13):
-        cave = self.theme == "cave"
+        cave = self.theme in DARK_THEMES
         for x in range(x0, x1 + 1):
             for y in range(top, ROWS):
                 if cave:
@@ -136,7 +139,7 @@ class Level:
         for i, ch in enumerate(text):
             tx = x + i
             if ch == "B":
-                self.set(tx, y, CAVE_BRICK if self.theme == "cave" else BRICK)
+                self.set(tx, y, CAVE_BRICK if self.theme in DARK_THEMES else BRICK)
             elif ch == "Q":
                 self.set(tx, y, QUESTION)
                 self.contents[self.index(tx, y)] = content or "star"
@@ -150,7 +153,7 @@ class Level:
 
     def block(self, x, y, content, brick=False):
         if brick:
-            self.set(x, y, CAVE_BRICK if self.theme == "cave" else BRICK)
+            self.set(x, y, CAVE_BRICK if self.theme in DARK_THEMES else BRICK)
         else:
             self.set(x, y, QUESTION)
         self.contents[self.index(x, y)] = content

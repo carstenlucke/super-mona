@@ -1,7 +1,7 @@
 # Super Mona
 
 An original side-scrolling platformer for the **GitHub Universe 2026 badge**.
-Run, jump and stomp through three stages as Mona (or Ducky the rubber duck).
+Run, jump and stomp through eight stages across two worlds as Mona (or Ducky the rubber duck).
 
 <img src="docs/title.png" width="320" alt="Super Mona title screen"> <img src="docs/intro.png" width="320" alt="Stage 1-2 intro"> <img src="docs/ducky.png" width="320" alt="Choosing Ducky on the HERO page">
 
@@ -45,6 +45,24 @@ python3 install.py --volume E:\   # Windows (use the BADGER drive letter)
 **No terminal?** Double-tap reset, then drag the `super_mona` folder into the
 `apps` folder on the `BADGER` drive. Eject the drive and the badge restarts.
 Super Mona appears in the badge menu.
+
+## Stages
+
+Two worlds of four stages each. They follow the shape of a classic NES world
+(overworld, underground, sky and castle), but the layouts are original.
+
+<img src="docs/stages.png" width="640" alt="Stages 1-4 to 2-4 on the badge">
+
+| Stage | Theme |
+| --- | --- |
+| 1-1 HELLO WORLD | Overworld: pipes, `?` blocks and stairs |
+| 1-2 SERVER ROOM | Underground server racks under a low ceiling |
+| 1-3 SKY BRIDGE | Dusk girders over long drops |
+| 1-4 FIREWALL | Castle: raised start, pits and girder bridges |
+| 2-1 PULL REQUEST | Overworld: pipe pairs and long block rows |
+| 2-2 OVERFLOW | Underground stack of brick towers and a pipe maze |
+| 2-3 CLOUD DEPLOY | Girder hops above the clouds |
+| 2-4 CONFLICT | Final castle with more shellbots |
 
 ## How to play
 

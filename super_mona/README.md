@@ -1,6 +1,6 @@
 # Super Mona
 
-Run, jump and stomp through three side-scrolling stages as Mona in this original platformer for the Universe 2026 badge.
+Run, jump and stomp through eight side-scrolling stages as Mona in this original platformer for the Universe 2026 badge.
 
 ## How to play
 
@@ -8,6 +8,22 @@ Reach the flag at the end of each stage before the timer runs out. Collect
 floating stars (100 stars earns an extra life), bump `?` blocks for power
 chips, sparkles and 1-ups, and stomp bugs and shellbots. Kick a shellbot's
 shell — or hold **B** to pick it up and release **B** to throw it.
+
+## Stages
+
+Two worlds of four stages each. They follow the shape of a classic NES world
+(overworld, underground, sky and castle), but the layouts are original.
+
+| Stage | Theme |
+| --- | --- |
+| 1-1 HELLO WORLD | Overworld: pipes, `?` blocks and stairs |
+| 1-2 SERVER ROOM | Underground server racks under a low ceiling |
+| 1-3 SKY BRIDGE | Dusk girders over long drops |
+| 1-4 FIREWALL | Castle: raised start, pits and girder bridges |
+| 2-1 PULL REQUEST | Overworld: pipe pairs and long block rows |
+| 2-2 OVERFLOW | Underground stack of brick towers and a pipe maze |
+| 2-3 CLOUD DEPLOY | Girder hops above the clouds |
+| 2-4 CONFLICT | Final castle with more shellbots |
 
 ## Controls
 
@@ -28,7 +44,7 @@ The pause screen has four pages; use **Left/Right** to switch between them:
 - **ITEMS**: power chips collected while already big are stored here (up to
   three). Use **Up/Down** and **A** to use one.
 - **HERO**: swap between Mona and Ducky, a classic yellow rubber duck, with **Select**
-  on stages that allow it (1-2 and 1-3). Ducky jumps higher but has less
+  on every stage after 1-1. Ducky jumps higher but has less
   grip.
 
 Press **Menu** or **B** to resume.

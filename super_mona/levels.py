@@ -174,4 +174,249 @@ def sky_bridge():
     return lv
 
 
-LEVELS = (hello_world, server_room, sky_bridge)
+def firewall():
+    """World 1 castle: low ceiling, pits bridged by girders, dense blocks."""
+    lv = Level("1-4 FIREWALL", 150, "castle", 300, switch=True)
+    lv.ground(0, 14, top=10)
+    lv.ground(15, 30)
+    lv.ground(34, 52)
+    lv.ground(57, 80)
+    lv.ground(84, 110)
+    lv.ground(114, 149)
+    lv.ceiling(0, 134, rows=(1, 2))
+    lv.start = (2, 9)
+
+    lv.row(17, 9, "Q", "chip")
+    lv.enemy(22)
+    lv.row(24, 6, "HHHHHH")
+    lv.star_line(31, 10, 3)
+
+    lv.enemy(38)
+    lv.enemy(40)
+    lv.row(42, 9, "BQB", "sparkle")
+    lv.stairs(48, 3)
+    lv.row(53, 11, "===")
+
+    lv.row(60, 6, "HHHHHHHHHHHH")
+    lv.row(62, 9, "BBBB")
+    lv.block(64, 9, "multi8", brick=True)
+    lv.enemy(68, "shellbot")
+    lv.enemy(74)
+    lv.enemy(76)
+    lv.star_line(81, 10, 3)
+
+    lv.pipe(88, 2)
+    lv.enemy(93)
+    lv.enemy(95)
+    lv.row(98, 9, "Q", "1up")
+    lv.stairs(104, 4)
+    lv.row(111, 11, "==")
+
+    lv.enemy(118, "shellbot")
+    lv.enemy(122)
+    lv.stairs(126, 5)
+    lv.flag(138)
+    return lv
+
+
+def pull_request():
+    """World 2 overworld: pipes in pairs, long block rows and stair pits."""
+    lv = Level("2-1 PULL REQUEST", 185, "day", 300, switch=True)
+    lv.ground(0, 45)
+    lv.ground(48, 98)
+    lv.ground(102, 132)
+    lv.ground(135, 184)
+    scenery(lv,
+            hills=(0, 50, 104, 150),
+            bushes=(14, 38, 66, 90, 120, 168),
+            clouds=((8, 2), (30, 4), (58, 2), (84, 3), (112, 2), (140, 4),
+                    (164, 3)))
+
+    lv.row(8, 9, "BQB", "chip")
+    lv.row(14, 9, "QQ")
+    lv.enemy(18)
+    lv.enemy(20)
+    lv.pipe(24, 2)
+    lv.pipe(30, 3)
+    lv.enemy(34, "shellbot")
+    lv.row(38, 5, "BBQBB", "sparkle")
+    lv.star_line(38, 4, 5)
+    lv.star_line(45, 9, 3)
+
+    lv.stairs(52, 3)
+    lv.stairs(55, 3, up=False)
+    lv.enemy(60)
+    lv.enemy(62)
+    lv.enemy(64)
+    lv.row(68, 9, "BBBBBBBB")
+    lv.block(71, 9, "multi6", brick=True)
+    lv.row(70, 5, "Q", "1up")
+    lv.pipe(80, 4)
+    lv.enemy(85, "shellbot")
+    lv.pipe(90, 2)
+    lv.star_line(98, 9, 4)
+
+    lv.row(104, 9, "QBQBQ")
+    lv.enemy(108)
+    lv.enemy(110)
+    lv.stairs(116, 4)
+    lv.row(124, 9, "Q", "chip")
+    lv.star_line(131, 8, 4)
+
+    lv.enemy(140, "shellbot")
+    lv.enemy(144)
+    lv.enemy(146)
+    lv.pipe(150, 3)
+    lv.stairs(158, 8)
+    lv.flag(172)
+    return lv
+
+
+def stack_overflow():
+    """World 2 underground: brick towers, tight corridors and a pipe maze."""
+    lv = Level("2-2 OVERFLOW", 160, "cave", 300, switch=True)
+    lv.ground(0, 34)
+    lv.ground(38, 70)
+    lv.ground(74, 112)
+    lv.ground(116, 159)
+    lv.ceiling(0, 145)
+
+    lv.row(8, 9, "QQQQ")
+    lv.block(9, 9, "chip")
+    lv.enemy(14)
+    for i, h in enumerate((1, 2, 3, 4)):
+        for y in range(13 - h, 13):
+            lv.row(18 + i * 3, y, "B")
+    lv.star_line(18, 7, 10)
+    lv.enemy(30)
+    lv.star_line(35, 9, 3)
+
+    lv.row(42, 6, "BBBBBBBBBB")
+    lv.row(42, 9, "B-B-BQB", "sparkle")
+    lv.enemy(46)
+    lv.enemy(48)
+    lv.enemy(52, "shellbot")
+    lv.pipe(58, 2)
+    lv.pipe(62, 3)
+    lv.pipe(66, 4)
+    lv.star_line(71, 8, 3)
+
+    lv.row(78, 9, "BBBBBB")
+    lv.row(78, 5, "BBBBBB")
+    lv.block(80, 5, "1up", brick=True)
+    lv.star_line(78, 7, 6)
+    lv.enemy(88)
+    lv.enemy(90)
+    lv.enemy(92)
+    lv.stairs(98, 4)
+    lv.stairs(102, 4, up=False)
+    lv.star_line(113, 9, 3)
+
+    lv.row(120, 9, "Q", "chip")
+    lv.enemy(124, "shellbot")
+    lv.enemy(128)
+    lv.stairs(134, 6)
+    lv.flag(148)
+    return lv
+
+
+def cloud_deploy():
+    """World 2 athletic stage: girder hops high above the clouds."""
+    lv = Level("2-3 CLOUD DEPLOY", 175, "cloud", 300, switch=True)
+    lv.ground(0, 14)
+    lv.ground(46, 56)
+    lv.ground(98, 108)
+    lv.ground(135, 174)
+    scenery(lv,
+            hills=(2, 144),
+            bushes=(8, 50, 102, 156),
+            clouds=((10, 8), (22, 3), (36, 10), (60, 2), (76, 9), (92, 3),
+                    (116, 10), (130, 4)))
+
+    lv.row(8, 9, "Q", "chip")
+    lv.row(17, 11, "=========")
+    lv.row(29, 10, "========")
+    lv.star_line(30, 9, 6)
+    lv.enemy(33, "bug", y=9)
+    lv.row(40, 11, "======")
+
+    lv.row(48, 9, "BQB", "sparkle")
+    lv.enemy(52)
+    lv.row(59, 11, "=========")
+    lv.row(71, 10, "========")
+    lv.star_line(72, 9, 6)
+    lv.enemy(75, "bug", y=9)
+    lv.row(82, 8, "Q", "1up")
+    lv.row(83, 11, "============")
+
+    lv.enemy(102, "shellbot")
+    lv.row(111, 11, "=========")
+    lv.row(123, 10, "=======")
+    lv.star_line(124, 9, 5)
+    lv.enemy(127, "bug", y=9)
+    lv.star_line(133, 7, 3)
+
+    lv.row(144, 9, "QBQ", "chip")
+    lv.enemy(148)
+    lv.enemy(150)
+    lv.stairs(152, 6)
+    lv.flag(164)
+    return lv
+
+
+def merge_conflict():
+    """World 2 castle: the final stage, longer pits and more shellbots."""
+    lv = Level("2-4 CONFLICT", 165, "castle", 300, switch=True)
+    lv.ground(0, 14, top=10)
+    lv.ground(15, 28)
+    lv.ground(32, 46)
+    lv.ground(51, 66)
+    lv.ground(71, 92)
+    lv.ground(96, 120)
+    lv.ground(125, 164)
+    lv.ceiling(0, 150, rows=(1, 2))
+    lv.start = (2, 9)
+
+    lv.row(18, 9, "Q", "chip")
+    lv.enemy(22, "shellbot")
+    lv.row(24, 6, "HHHH")
+    lv.star_line(29, 10, 3)
+
+    lv.enemy(35)
+    lv.enemy(37)
+    lv.row(38, 9, "BQB", "sparkle")
+    lv.stairs(42, 3)
+    lv.row(47, 11, "===")
+
+    lv.row(54, 6, "HHHHHHHHHH")
+    lv.row(56, 9, "BBBB")
+    lv.block(57, 9, "multi8", brick=True)
+    lv.enemy(60, "shellbot")
+    lv.enemy(63)
+    lv.row(67, 11, "===")
+
+    lv.pipe(74, 3)
+    lv.enemy(79)
+    lv.enemy(81)
+    lv.enemy(83, "shellbot")
+    lv.row(86, 9, "Q", "1up")
+    lv.stairs(88, 4)
+    lv.star_line(93, 9, 3)
+
+    lv.enemy(100)
+    lv.enemy(102)
+    lv.row(104, 6, "HHHHHHHH")
+    lv.enemy(110, "shellbot")
+    lv.stairs(114, 4)
+    lv.row(121, 11, "===")
+
+    lv.enemy(130)
+    lv.enemy(132)
+    lv.enemy(134, "shellbot")
+    lv.stairs(138, 6)
+    lv.flag(152)
+    return lv
+
+
+LEVELS = (hello_world, server_room, sky_bridge, firewall,
+          pull_request, stack_overflow, cloud_deploy, merge_conflict)

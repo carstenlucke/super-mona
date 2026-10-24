@@ -66,6 +66,14 @@ class SuperMonaTests(unittest.TestCase):
             settle(world)
             self.assertTrue(world.player.on_ground, level.name)
 
+    def test_levels_have_unique_names_and_known_themes(self):
+        names = [factory().name for factory in levels.LEVELS]
+        self.assertEqual(len(names), len(set(names)))
+        for factory in levels.LEVELS:
+            level = factory()
+            self.assertIn(level.theme, ("day", "cave", "dusk", "cloud", "castle"))
+            self.assertLessEqual(level.width, 190, level.name)
+
     def test_held_jump_goes_higher(self):
         heights = []
         for hold in (False, True):

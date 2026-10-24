@@ -14,6 +14,8 @@ SKY = {
     "day": color.rgb(92, 148, 252),
     "cave": color.rgb(0, 0, 0),
     "dusk": color.rgb(52, 44, 110),
+    "cloud": color.rgb(150, 200, 255),
+    "castle": color.rgb(40, 8, 20),
 }
 BLACK = color.rgb(0, 0, 0)
 WHITE = color.rgb(255, 255, 255)

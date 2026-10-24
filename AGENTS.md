@@ -77,6 +77,14 @@ find "<BADGER>/apps/super_mona" -name '._*' -delete   # macOS only
 
 - Run the tests with `python3 -m unittest discover -s tests` (needs Pillow).
   Keep them passing.
+- Stages live in `super_mona/levels.py` and are listed in `LEVELS`. Layouts
+  must be original; take only the structure of classic platformer worlds
+  (overworld, underground, sky, castle), never their tile layouts. A test bot
+  runs right and jumps at walls and gaps, so every stage must be finishable
+  that way. Keep `width` at 190 tiles or less (the stage is pre-rendered to
+  one image) and keep stage names within 144px in `font.absolute` so they fit
+  the intro panel. Themes are `day`, `cave`, `dusk`, `cloud` and `castle`
+  (see `render.SKY`).
 - The art is generated. Edit `tools/build_super_mona_assets.py` and run it
   rather than hand-editing PNGs in `super_mona/assets/`. `icon.png` must stay
   24x24.
