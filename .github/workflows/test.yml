@@ -20,5 +20,18 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - name: Generated assets are up to date
         run: |
+          mkdir -p /tmp/committed && cp -R super_mona/assets super_mona/icon.png /tmp/committed/
           python tools/build_super_mona_assets.py
-          git diff --exit-code -- super_mona/assets super_mona/icon.png
+          python - <<'PY'
+          import sys
+          from PIL import Image
+          bad = []
+          for name in ("assets/tiles.png", "assets/players.png", "assets/mobs.png", "icon.png"):
+              old = Image.open("/tmp/committed/" + name).convert("RGBA")
+              new = Image.open("super_mona/" + name).convert("RGBA")
+              if old.size != new.size or old.tobytes() != new.tobytes():
+                  bad.append(name)
+          if bad:
+              sys.exit("Regenerate and commit: " + ", ".join(bad))
+          print("generated assets match")
+          PY
