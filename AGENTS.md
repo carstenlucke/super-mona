@@ -77,6 +77,9 @@ find "<BADGER>/apps/super_mona" -name '._*' -delete   # macOS only
 
 - Run the tests with `python3 -m unittest discover -s tests` (needs Pillow).
   Keep them passing.
+- The browser player in `web/` loads the files named in `MODULES` and
+  `SPRITES` in `web/index.html`. Add new modules or sprite sheets there too;
+  `tests/test_web.py` fails until you do.
 - Stages live in `super_mona/levels.py` and are listed in `LEVELS`. Worlds 1-2
   are hand-built; worlds 3-8 are assembled from segment functions in
   `SEGMENTS` using the plan strings in `_WORLDS` (the world index raises the

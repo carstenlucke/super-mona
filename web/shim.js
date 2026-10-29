@@ -210,8 +210,11 @@ const Shim = {
 };
 
 // Input --------------------------------------------------------------------
-// Bit values match BUTTON_* in badge_shim.py.
-const UP = 1, DOWN = 2, LEFT = 4, RIGHT = 8, SELECT = 16, BACK = 32, MENU = 64, HOME = 128;
+// The only definition of the button bits; badge_shim.py builds BUTTON_* from
+// Shim.BUTTONS.
+const BUTTONS = { UP: 1, DOWN: 2, LEFT: 4, RIGHT: 8, SELECT: 16, BACK: 32, MENU: 64, HOME: 128 };
+const { UP, DOWN, LEFT, RIGHT, SELECT, BACK, MENU } = BUTTONS;
+Shim.BUTTONS = BUTTONS;
 
 const KEYS = {
   ArrowUp: UP, KeyW: UP,
@@ -316,10 +319,9 @@ function padMask() {
 }
 
 // Touch buttons on the page carry data-button="UP" and so on.
-const touchBits = { UP, DOWN, LEFT, RIGHT, SELECT, BACK, MENU };
 function bindTouch(root) {
   for (const el of root.querySelectorAll("[data-button]")) {
-    const bit = touchBits[el.dataset.button];
+    const bit = BUTTONS[el.dataset.button];
     const on = (e) => { e.preventDefault(); touchHeld |= bit; latched |= bit; el.classList.add("down"); };
     const off = (e) => { e.preventDefault(); touchHeld &= ~bit; el.classList.remove("down"); };
     el.addEventListener("pointerdown", on);
