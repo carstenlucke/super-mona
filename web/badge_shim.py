@@ -142,17 +142,26 @@ class _Badge:
 
 
 class State:
+    # Blocked storage or a corrupt entry must not stop the game, so both fail
+    # quietly; load() then returns False like the firmware does.
     @staticmethod
     def load(name, data):
-        raw = js.localStorage.getItem("badgeware:" + name)
-        if not raw:
+        try:
+            raw = js.localStorage.getItem("badgeware:" + name)
+            saved = json.loads(raw) if raw else None
+        except Exception:
             return False
-        data.update(json.loads(raw))
+        if not isinstance(saved, dict):
+            return False
+        data.update(saved)
         return True
 
     @staticmethod
     def save(name, data):
-        js.localStorage.setItem("badgeware:" + name, json.dumps(data))
+        try:
+            js.localStorage.setItem("badgeware:" + name, json.dumps(data))
+        except Exception:
+            pass
 
 
 badge = _Badge()
@@ -164,20 +173,28 @@ def is_dir(path):
 
 
 def run(update):
-    start = [None, None]
+    origin = None
 
     def tick(now):
-        if start[0] is None:
-            start[0] = start[1] = now
-        badge.ticks = int(now - start[0])
-        badge.ticks_delta = int(now - start[1])
-        start[1] = now
+        nonlocal origin
+        if origin is None:
+            origin = now
+        # Differences of whole-millisecond ticks add up to real time; rounding
+        # each frame's delta on its own would lose the fraction every frame.
+        ticks = int(now - origin)
+        badge.ticks_delta = ticks - badge.ticks
+        badge.ticks = ticks
         E.beginFrame()
         badge._held = E.held
         badge._pressed = E.pressed
         badge._released = E.released
         update()
 
+    # The firmware calls the app's on_exit() when it quits; shim.js does so on
+    # Home and when the page is closed.
+    on_exit = update.__globals__.get("on_exit")
+    if on_exit is not None:
+        E.exitHook = create_proxy(on_exit)
     E.start(create_proxy(tick))
 
 

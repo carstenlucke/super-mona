@@ -229,6 +229,7 @@ const PAD_BUTTONS = [[0, SELECT], [2, BACK], [1, BACK], [9, MENU], [12, UP], [13
 const keysDown = new Set();
 let latched = 0; // buttons tapped and released between two frames
 let prevHeld = 0;
+let touchHeld = 0; // buttons held on the touch pad
 
 function keyMask() {
   let m = 0;
@@ -236,11 +237,25 @@ function keyMask() {
   return m;
 }
 
+// Set by badge_shim.run() to the app's on_exit(), which saves the high score.
+// It only saves a better score, so calling it more than once is harmless.
+Shim.exitHook = null;
+
+function runExitHook() {
+  if (!Shim.exitHook) return;
+  try {
+    Shim.exitHook();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 // Home quits the app on the badge; here it restarts at the title screen.
 const QUIT_KEYS = new Set(["Home", "KeyQ"]);
 
 addEventListener("keydown", (e) => {
   if (QUIT_KEYS.has(e.code) && !e.metaKey && !e.ctrlKey) {
+    runExitHook();
     location.reload();
     return;
   }
@@ -253,12 +268,41 @@ addEventListener("keydown", (e) => {
 });
 addEventListener("keyup", (e) => {
   if (KEYS[e.code]) keysDown.delete(e.code);
+  // macOS sends no keyup for keys released while Cmd is down, so they would
+  // stay held.
+  if (e.key === "Meta") keysDown.clear();
 });
-addEventListener("blur", () => keysDown.clear());
+
+// Forget every held key and touch button when the page loses focus or is
+// hidden; their release events may never arrive.
+function releaseAll() {
+  keysDown.clear();
+  touchHeld = 0;
+  for (const el of document.querySelectorAll("[data-button].down")) el.classList.remove("down");
+}
+addEventListener("blur", releaseAll);
+addEventListener("pagehide", () => {
+  releaseAll();
+  runExitHook();
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) releaseAll();
+});
+
+// getGamepads() throws a SecurityError in an iframe without the gamepad
+// permission; play on without a gamepad then.
+let gamepadsAllowed = !!navigator.getGamepads;
 
 function padMask() {
   let m = 0;
-  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  let pads = [];
+  if (gamepadsAllowed) {
+    try {
+      pads = navigator.getGamepads();
+    } catch (err) {
+      gamepadsAllowed = false;
+    }
+  }
   for (const pad of pads) {
     if (!pad) continue;
     for (const [i, bit] of PAD_BUTTONS) if (pad.buttons[i] && pad.buttons[i].pressed) m |= bit;
@@ -273,7 +317,6 @@ function padMask() {
 
 // Touch buttons on the page carry data-button="UP" and so on.
 const touchBits = { UP, DOWN, LEFT, RIGHT, SELECT, BACK, MENU };
-let touchHeld = 0;
 function bindTouch(root) {
   for (const el of root.querySelectorAll("[data-button]")) {
     const bit = touchBits[el.dataset.button];
