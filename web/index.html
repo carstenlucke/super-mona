@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Super Mona</title>
+<link rel="icon" href="../super_mona/icon.png">
+<style>
+  :root {
+    --bg: #0d0b1e;
+    --bezel: #1b1736;
+    --edge: #2e2860;
+    --ink: #e9e6ff;
+    --muted: #8f88c2;
+    --gold: #ffd64a;
+    --pink: #ff50c8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(ellipse at top, #1d1940 0%, var(--bg) 60%);
+    color: var(--ink);
+    font: 14px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 16px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .badge {
+    position: relative;
+    background: var(--bezel);
+    border: 2px solid var(--edge);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 20px 60px #0008, inset 0 1px 0 #ffffff14;
+  }
+  canvas#screen {
+    display: block;
+    width: min(88vw, calc((100vh - 230px) * 4 / 3), 800px);
+    aspect-ratio: 4 / 3;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: #000;
+    border-radius: 4px;
+  }
+  #overlay {
+    position: absolute;
+    inset: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #000c;
+    border-radius: 4px;
+    text-align: center;
+    padding: 20px;
+  }
+  #overlay.hidden { display: none; }
+  #overlay h1 { margin: 0; color: var(--gold); letter-spacing: 0.15em; font-size: 22px; }
+  #overlay p { margin: 0; color: var(--muted); }
+  #overlay pre {
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto;
+    text-align: left;
+    color: #ff9a9a;
+    font-size: 12px;
+    white-space: pre-wrap;
+  }
+  .keys {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 840px;
+    gap: 6px 22px;
+    color: var(--muted);
+  }
+  .keys b { color: var(--ink); font-weight: 600; }
+  kbd {
+    display: inline-block;
+    min-width: 1.6em;
+    padding: 0 5px;
+    border: 1px solid var(--edge);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: var(--bezel);
+    color: var(--gold);
+    text-align: center;
+    font: inherit;
+    font-size: 12px;
+  }
+  .touch { display: none; width: 100%; max-width: 520px; justify-content: space-between; align-items: center; }
+  .dpad { display: grid; grid-template: repeat(3, 52px) / repeat(3, 52px); }
+  .dpad [data-button="UP"] { grid-area: 1 / 2; }
+  .dpad [data-button="LEFT"] { grid-area: 2 / 1; }
+  .dpad [data-button="RIGHT"] { grid-area: 2 / 3; }
+  .dpad [data-button="DOWN"] { grid-area: 3 / 2; }
+  .face { display: flex; gap: 14px; align-items: center; }
+  .touch button {
+    border: 2px solid var(--edge);
+    background: var(--bezel);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+    border-radius: 10px;
+    touch-action: none;
+  }
+  .face button { width: 64px; height: 64px; border-radius: 50%; }
+  .face [data-button="SELECT"] { border-color: var(--gold); color: var(--gold); }
+  .face [data-button="BACK"] { border-color: var(--pink); color: var(--pink); }
+  .face [data-button="MENU"] { width: 52px; height: 30px; border-radius: 15px; font-size: 11px; }
+  .touch button.down { background: var(--edge); }
+  @media (pointer: coarse) {
+    .touch { display: flex; }
+    .keys { display: none; }
+    canvas#screen { width: min(94vw, calc((100vh - 260px) * 4 / 3)); }
+  }
+</style>
+</head>
+<body>
+  <div class="badge">
+    <canvas id="screen" width="160" height="120"></canvas>
+    <div id="overlay">
+      <h1>SUPER MONA</h1>
+      <p id="status">Lade Python-Laufzeit …</p>
+    </div>
+  </div>
+
+  <div class="keys">
+    <span><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> <b>Laufen</b></span>
+    <span><kbd>X</kbd> / <kbd>Leertaste</kbd> <b>Springen (A)</b></span>
+    <span><kbd>Z</kbd> / <kbd>Y</kbd> / <kbd>⇧</kbd> <b>Rennen, Tragen (B)</b></span>
+    <span><kbd>Enter</kbd> / <kbd>Esc</kbd> <b>Pause</b></span>
+    <span><kbd>Q</kbd> / <kbd>Pos1</kbd> <b>Zum Titel (Home)</b></span>
+  </div>
+
+  <div class="touch">
+    <div class="dpad">
+      <button data-button="UP">▲</button>
+      <button data-button="LEFT">◀</button>
+      <button data-button="RIGHT">▶</button>
+      <button data-button="DOWN">▼</button>
+    </div>
+    <div class="face">
+      <button data-button="MENU">MENU</button>
+      <button data-button="BACK">B</button>
+      <button data-button="SELECT">A</button>
+    </div>
+  </div>
+
+<script src="shim.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
+<script>
+  // Files copied from ../super_mona into Pyodide's file system.
+  const APP = "../super_mona/";
+  const MODULES = ["__init__.py", "game.py", "levels.py", "render.py"];
+  const SPRITES = ["tiles.png", "players.png", "mobs.png"];
+
+  const overlay = document.getElementById("overlay");
+  const status = document.getElementById("status");
+
+  window.showError = (msg) => {
+    overlay.classList.remove("hidden");
+    overlay.innerHTML = "<h1>FEHLER</h1>";
+    const pre = document.createElement("pre");
+    pre.textContent = msg;
+    overlay.appendChild(pre);
+    console.error(msg);
+  };
+
+  async function fetchOk(url) {
+    const res = await fetch(url, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+    return res;
+  }
+
+  async function loadSprite(name) {
+    const blob = await (await fetchOk(APP + "assets/" + name)).blob();
+    const bitmap = await createImageBitmap(blob);
+    const c = SuperMonaShim.newCanvas(bitmap.width, bitmap.height);
+    c.getContext("2d").drawImage(bitmap, 0, 0);
+    SuperMonaShim.images[name] = c;
+  }
+
+  async function main() {
+    if (location.protocol === "file:") {
+      throw new Error("Bitte über einen lokalen Webserver öffnen:\n  python3 web/serve.py");
+    }
+    SuperMonaShim.bindTouch(document);
+    const [pyodide, shimSource, sources] = await Promise.all([
+      loadPyodide(),
+      fetchOk("badge_shim.py").then((r) => r.text()),
+      Promise.all(MODULES.map((m) => fetchOk(APP + m).then((r) => r.text()))),
+      Promise.all(SPRITES.map(loadSprite)),
+    ]);
+    status.textContent = "Starte Spiel …";
+    pyodide.FS.mkdirTree("/super_mona/assets");
+    MODULES.forEach((m, i) => pyodide.FS.writeFile("/super_mona/" + m, sources[i]));
+    pyodide.runPython(shimSource, { filename: "badge_shim.py" });
+    pyodide.runPython(`
+path = "/super_mona/__init__.py"
+exec(compile(open(path).read(), path, "exec"), {"__name__": "__main__"})
+`);
+    overlay.classList.add("hidden");
+  }
+
+  main().catch((err) => showError(String(err && err.message || err)));
+</script>
+</body>
+</html>
