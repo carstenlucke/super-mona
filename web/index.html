@@ -200,7 +200,8 @@
       Promise.all(SPRITES.map(loadSprite)),
     ]);
     status.textContent = "Starte Spiel …";
-    pyodide.FS.mkdirTree("/super_mona/assets");
+    // Sprites stay in SuperMonaShim.images; only the modules go on disk.
+    pyodide.FS.mkdirTree("/super_mona");
     MODULES.forEach((m, i) => pyodide.FS.writeFile("/super_mona/" + m, sources[i]));
     pyodide.runPython(shimSource, { filename: "badge_shim.py" });
     pyodide.runPython(`
